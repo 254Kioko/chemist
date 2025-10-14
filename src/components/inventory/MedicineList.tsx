@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
+import { Search, Lock } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Table,
   TableBody,
@@ -26,6 +28,7 @@ interface MedicineListProps {
 
 const MedicineList = ({ medicines }: MedicineListProps) => {
   const [search, setSearch] = useState("");
+  const { canEditInventory, isCashier } = useUserRole();
 
   const filteredMedicines = medicines.filter((med) =>
     med.name.toLowerCase().includes(search.toLowerCase())
@@ -45,6 +48,14 @@ const MedicineList = ({ medicines }: MedicineListProps) => {
     <Card>
       <CardHeader>
         <CardTitle>Medicine Inventory</CardTitle>
+        {isCashier && (
+          <Alert className="mt-2">
+            <Lock className="h-4 w-4" />
+            <AlertDescription>
+              Inventory editing is restricted to managers only. You have view-only access.
+            </AlertDescription>
+          </Alert>
+        )}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
